@@ -1,0 +1,133 @@
+<html>
+<head>
+  <title>Siletreco</title>
+  <style>
+	body {
+  	font-family: Arial, sans-serif;
+  	text-align: center;
+	}
+
+	h1 {
+  	color: green;
+	}
+
+	input {
+  	width: 50px;
+  	font-size: 20px;
+  	text-transform: uppercase;
+	}
+
+	button {
+  	font-size: 20px;
+  	padding: 10px;
+  	margin: 10px;
+	}
+
+	.correct {
+  	color: green;
+	}
+
+	.wrong {
+  	color: red;
+	}
+
+	.hint {
+  	color: gray;
+	}
+  </style>
+</head>
+<body>
+  <h1>Siletreco</h1>
+  <p>Um jogo diário de adivinhar palavras com sílabas</p>
+  <p>A palavra do dia tem <span id="syllables">?</span> sílabas</p>
+  <div id="inputs"></div>
+  <button id="check">Verificar</button>
+  <button id="reset">Reiniciar</button>
+  <button id="show">Mostrar dica</button>
+  <p id="result"></p>
+  <p id="hint"></p>
+  <script>
+	// Palavras possíveis para o jogo
+	// Array de palavras disponíveis
+var words = ["abacaxi", "banana", "laranja", "maçã", "uva"];
+
+// Escolhe uma nova palavra aleatória
+var word = words[Math.floor(Math.random() * words.length)];
+
+// Divide a palavra em sílabas
+var syllables = word.match(/[aeiouy]+|[^aeiouy]+/g);
+
+// Mostra o número de sílabas na palavra
+document.getElementById("syllables").innerHTML = syllables.length;
+// Remove os campos de entrada antigos e cria novos campos
+var inputs = document.getElementById("inputs");
+while (inputs.firstChild) {
+  inputs.removeChild(inputs.firstChild);
+}
+for (var i = 0; i < syllables.length; i++) {
+  var input = document.createElement("input");
+  input.id = "input" + i;
+  input.maxLength = syllables[i].length;
+  inputs.appendChild(input);
+}
+// Habilita o botão "Verificar" e desabilita o botão "Reiniciar"
+document.getElementById("check").disabled = false;
+document.getElementById("reset").disabled = true;
+function check() {
+  // Cria um array para armazenar as respostas do usuário
+  var userAnswers = [];
+
+  // Obtém as respostas do usuário e as adiciona ao array
+  for (var i = 0; i < syllables.length; i++) {
+    var input = document.getElementById("input" + i);
+    userAnswers.push(input.value);
+  }
+
+  // Verifica se as respostas do usuário estão corretas
+  var correctAnswers = syllables.slice();
+  correctAnswers.sort();
+  userAnswers.sort();
+  var isCorrect = (JSON.stringify(correctAnswers) === JSON.stringify(userAnswers));
+
+// Mostra uma mensagem informando se as respostas estão corretas ou não
+var result = document.getElementById("result");
+  result.innerHTML = isCorrect ? "Correto!" : "Incorreto! Tente novamente.";
+
+  // Desabilita os campos de entrada e o botão "Verificar"
+  for (var i = 0; i < syllables.length; i++) {
+    var input = document.getElementById("input" + i);
+    input.disabled = true;
+  }
+  document.getElementById("check").disabled = true;
+
+  // Habilita o botão "Reiniciar"
+  document.getElementById("reset").disabled = false;
+}
+
+// Função para reiniciar o jogo
+function reset() {
+  // Recarrega a página para reiniciar o jogo
+  location.reload();
+}
+
+// Função para mostrar uma dica
+function showHint() {
+  // Escolhe aleatoriamente uma sílaba da palavra
+  var randomIndex = Math.floor(Math.random() * syllables.length);
+  var randomSyllable = syllables[randomIndex];
+
+  // Mostra a sílaba escolhida na tela
+  var hint = document.getElementById("hint");
+  hint.innerHTML = "Dica: a palavra tem a sílaba " + randomSyllable + " no meio";
+  hint.className = "hint";
+}
+
+// Adiciona os eventos aos botões
+document.getElementById("check").addEventListener("click", check);
+document.getElementById("reset").addEventListener("click", reset);
+document.getElementById("show").addEventListener("click", showHint);
+
+  </script>
+</body>
+</html>
+
